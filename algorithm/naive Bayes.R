@@ -1,0 +1,36 @@
+td<-read.table('train_data.txt',head=F)
+td<-as.matrix(td)
+tl<-scan('train_labels.txt')
+m<-ncol(td)
+td0<-td[1:100,]
+td1<-td[101:200,]
+D0<-sum(td0)
+D1<-sum(td1)
+estimate0<-function(x)
+{
+  (1+sum(x))/(D0+m)
+}
+estimate1<-function(x)
+{
+  (1+sum(x))/(D1+m)
+}
+px0<-apply(td0,2,estimate0)
+px1<-apply(td1,2,estimate1)
+predict<-function(x)
+{
+  if(sum(log(px0^x))>=sum(log(px1^x)))
+  {
+    return(0)
+  }else
+  {
+    return(1)
+  }
+}
+tst<-read.table("test_data.txt",head=F)
+tst<-as.matrix(tst)
+tsl<-scan("test_labels.txt")
+predict.train<-apply(td,1,predict)
+predict.test<-apply(tst,1,predict)
+predict.test
+error.train<-length(which(tl!=predict.train))/length(tl);error.train
+error.test<-length(which(tsl!=predict.test))/length(tsl);error.test
